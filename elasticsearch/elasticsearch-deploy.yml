@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+        name: elastic-stack
+---
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+        name: elasticsearch
+        namespace: elastic-stack
+spec:
+        version: 7.10.2
+        nodeSets:
+                - name: default
+                  count: 1
+                  config:
+                          node.store.allow_mmap: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+        name: elasticsearch
+        namespace: elastic-stack
+spec:
+        type: NodePort
+        selector:
+                common.k8s.elastic.co/type: elasticsearch
+                elasticsearch.k8s.elastic.co/cluster-name: elasticsearch
+        ports:
+                - name: elasticsearch
+                  protocol: TCP
+                  port: 9200
+                  nodePort: 31000
