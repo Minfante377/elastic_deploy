@@ -1,0 +1,26 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+        name: kibana
+        namespace: elastic-stack
+spec:
+        version: 7.10.2
+        count: 1
+        elasticsearchRef:
+                name: elasticsearch
+---
+apiVersion: v1
+kind: Service
+metadata:
+        name: kibana
+        namespace: elastic-stack
+spec:
+        type: NodePort
+        selector:
+                common.k8s.elastic.co/type: kibana
+                kibana.k8s.elastic.co/name: kibana
+        ports:
+                - name: kibana
+                  protocol: TCP
+                  port: 5601
+                  nodePort: 31001
